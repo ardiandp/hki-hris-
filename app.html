@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HRIS Karyawan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            max-width: 100vw;
+            overflow-x: hidden;
+            padding-bottom: 70px; /* Space for bottom nav */
+        }
+        
+        .header {
+            background-color: #4a6fa5;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .profile-info {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background-color: white;
+            margin: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .profile-pic {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            overflow: hidden;
+        }
+        
+        .profile-pic i {
+            font-size: 1.5rem;
+            color: #666;
+        }
+        
+        .profile-text h3 {
+            font-size: 1rem;
+            margin-bottom: 3px;
+        }
+        
+        .profile-text p {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            padding: 10px;
+        }
+        
+        .action-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        
+        .action-card:active {
+            transform: scale(0.98);
+        }
+        
+        .action-card i {
+            font-size: 1.5rem;
+            color: #4a6fa5;
+            margin-bottom: 10px;
+        }
+        
+        .action-card h3 {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        .action-card p {
+            font-size: 0.7rem;
+            color: #666;
+        }
+        
+        .section-title {
+            padding: 10px 15px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        .attendance-status {
+            background-color: white;
+            margin: 10px;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .status-item:last-child {
+            border-bottom: none;
+        }
+        
+        .status-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .status-value {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .status-value.present {
+            color: #2ecc71;
+        }
+        
+        .status-value.absent {
+            color: #e74c3c;
+        }
+        
+        .status-value.pending {
+            color: #f39c12;
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #666;
+            text-decoration: none;
+            font-size: 0.7rem;
+        }
+        
+        .nav-item i {
+            font-size: 1.2rem;
+            margin-bottom: 3px;
+        }
+        
+        .nav-item.active {
+            color: #4a6fa5;
+        }
+        
+        /* Page content styles */
+        .page-content {
+            display: none;
+            padding: 15px;
+        }
+        
+        .page-content.active {
+            display: block;
+        }
+        
+        /* Attendance page styles */
+        .attendance-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        
+        .attendance-time {
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 10px 0;
+        }
+        
+        .attendance-date {
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .attendance-btn {
+            background-color: #4a6fa5;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            width: 100%;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .attendance-btn:active {
+            background-color: #3a5a8a;
+        }
+        
+        .attendance-btn.secondary {
+            background-color: #e0e0e0;
+            color: #333;
+            margin-top: 10px;
+        }
+        
+        /* Leave request page styles */
+        .leave-form {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: #444;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .submit-btn {
+            background-color: #4a6fa5;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            width: 100%;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .submit-btn:active {
+            background-color: #3a5a8a;
+        }
+        
+        /* Records page styles */
+        .record-item {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        
+        .record-date {
+            font-weight: 600;
+        }
+        
+        .record-status {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        
+        .record-status.present {
+            background-color: #e8f8f0;
+            color: #2ecc71;
+        }
+        
+        .record-status.absent {
+            background-color: #fdecea;
+            color: #e74c3c;
+        }
+        
+        .record-status.leave {
+            background-color: #fef5e6;
+            color: #f39c12;
+        }
+        
+        .record-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        /* Profile page styles */
+        .profile-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .profile-pic-large {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            overflow: hidden;
+        }
+        
+        .profile-pic-large i {
+            font-size: 2rem;
+            color: #666;
+        }
+        
+        .profile-info h2 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        
+        .profile-info p {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .info-value {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .logout-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            width: 100%;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 20px;
+        }
+        
+        .logout-btn:active {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <!-- Home Page -->
+    <div class="page-content active" id="home-page">
+        <div class="header">
+            <h1>Selamat Datang</h1>
+        </div>
+        
+        <div class="profile-info">
+            <div class="profile-pic">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="profile-text">
+                <h3>John Doe</h3>
+                <p>Karyawan - IT Department</p>
+                <p>ID: EMP001</p>
+            </div>
+        </div>
+        
+        <div class="quick-actions">
+            <div class="action-card">
+                <i class="fas fa-fingerprint"></i>
+                <h3>Absensi</h3>
+                <p>Presensi harian</p>
+            </div>
+            <div class="action-card">
+                <i class="fas fa-calendar-check"></i>
+                <h3>Izin</h3>
+                <p>Ajukan cuti/izin</p>
+            </div>
+            <div class="action-card">
+                <i class="fas fa-file-alt"></i>
+                <h3>Rekap</h3>
+                <p>Lihat rekap bulanan</p>
+            </div>
+            <div class="action-card">
+                <i class="fas fa-bell"></i>
+                <h3>Notifikasi</h3>
+                <p>Pemberitahuan</p>
+            </div>
+        </div>
+        
+        <div class="section-title">Status Hari Ini</div>
+        
+        <div class="attendance-status">
+            <div class="status-item">
+                <span class="status-label">Status Kehadiran</span>
+                <span class="status-value present">Hadir</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Jam Masuk</span>
+                <span class="status-value">08:15</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Jam Pulang</span>
+                <span class="status-value">-</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Izin Tertunda</span>
+                <span class="status-value pending">2</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Attendance Page -->
+    <div class="page-content" id="attendance-page">
+        <div class="header">
+            <h1>Absensi</h1>
+        </div>
+        
+        <div class="attendance-card">
+            <i class="fas fa-calendar-alt" style="font-size: 1.5rem; color: #4a6fa5;"></i>
+            <div class="attendance-date">Rabu, 16 April 2025</div>
+            <div class="attendance-time" id="current-time">00:00:00</div>
+            <button class="attendance-btn">Check In</button>
+            <button class="attendance-btn secondary">Check Out</button>
+        </div>
+        
+        <div class="section-title">Riwayat Bulan Ini</div>
+        
+        <div class="record-item">
+            <div class="record-header">
+                <span class="record-date">15 April 2025</span>
+                <span class="record-status present">Hadir</span>
+            </div>
+            <div class="record-details">
+                <span>Masuk: 08:12</span>
+                <span>Pulang: 17:05</span>
+            </div>
+        </div>
+        
+        <div class="record-item">
+            <div class="record-header">
+                <span class="record-date">14 April 2025</span>
+                <span class="record-status present">Hadir</span>
+            </div>
+            <div class="record-details">
+                <span>Masuk: 08:20</span>
+                <span>Pulang: 16:55</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Leave Page -->
+    <div class="page-content" id="leave-page">
+        <div class="header">
+            <h1>Pengajuan Izin</h1>
+        </div>
+        
+        <div class="leave-form">
+            <div class="form-group">
+                <label for="leave-type">Jenis Izin</label>
+                <select id="leave-type" class="form-control">
+                    <option value="">Pilih jenis izin</option>
+                    <option value="sick">Sakit</option>
+                    <option value="permit">Izin</option>
+                    <option value="leave">Cuti</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="leave-date">Tanggal</label>
+                <input type="date" id="leave-date" class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label for="leave-duration">Durasi</label>
+                <select id="leave-duration" class="form-control">
+                    <option value="full">Hari Penuh</option>
+                    <option value="half">Setengah Hari</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="leave-reason">Alasan</label>
+                <textarea id="leave-reason" class="form-control" rows="3" placeholder="Masukkan alasan izin"></textarea>
+            </div>
+            
+            <button class="submit-btn">Ajukan Izin</button>
+        </div>
+        
+        <div class="section-title">Riwayat Pengajuan</div>
+        
+        <div class="record-item">
+            <div class="record-header">
+                <span class="record-date">10 April 2025</span>
+                <span class="record-status leave">Cuti</span>
+            </div>
+            <div class="record-details">
+                <span>Durasi: 1 Hari</span>
+                <span>Status: Disetujui</span>
+            </div>
+        </div>
+        
+        <div class="record-item">
+            <div class="record-header">
+                <span class="record-date">5 April 2025</span>
+                <span class="record-status leave">Izin</span>
+            </div>
+            <div class="record-details">
+                <span>Durasi: Setengah Hari</span>
+                <span>Status: Ditolak</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Records Page -->
+    <div class="page-content" id="records-page">
+        <div class="header">
+            <h1>Rekap Bulanan</h1>
+        </div>
+        
+        <div class="attendance-status">
+            <div class="status-item">
+                <span class="status-label">Bulan</span>
+                <span class="status-value">April 2025</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Total Hari Kerja</span>
+                <span class="status-value">22</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Hadir</span>
+                <span class="status-value present">12</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Izin/Cuti</span>
+                <span class="status-value">2</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Absen</span>
+                <span class="status-value absent">0</span>
+            </div>
+        </div>
+        
+        <div class="section-title">Detail Harian</div>
+        
+        <div class="record-item">
+            <div class="record-header">
+                <span class="record-date">15 April 2025</span>
+                <span class="record-status present">Hadir</span>
+            </div>
+            <div class="record-details">
+                <span>Masuk: 08:12</span>
+                <span>Pulang: 17:05</span>
+            </div>
+        </div>
+        
+        <div class="record-item">
+            <div class="record-header">
+                <span class="record-date">14 April 2025</span>
+                <span class="record-status present">Hadir</span>
+            </div>
+            <div class="record-details">
+                <span>Masuk: 08:20</span>
+                <span>Pulang: 16:55</span>
+            </div>
+        </div>
+        
+        <div class="record-item">
+            <div class="record-header">
+                <span class="record-date">10 April 2025</span>
+                <span class="record-status leave">Cuti</span>
+            </div>
+            <div class="record-details">
+                <span>Alasan: Liburan</span>
+                <span>Status: Disetujui</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Profile Page -->
+    <div class="page-content" id="profile-page">
+        <div class="header">
+            <h1>Profil Saya</h1>
+        </div>
+        
+        <div class="profile-section">
+            <div class="profile-header">
+                <div class="profile-pic-large">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="profile-info">
+                    <h2>John Doe</h2>
+                    <p>Karyawan - IT Department</p>
+                    <p>ID: EMP001</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="profile-section">
+            <div class="info-item">
+                <span class="info-label">Email</span>
+                <span class="info-value">john.doe@company.com</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">No. HP</span>
+                <span class="info-value">081234567890</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Alamat</span>
+                <span class="info-value">Jl. Contoh No. 123, Jakarta</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Tanggal Bergabung</span>
+                <span class="info-value">1 Januari 2020</span>
+            </div>
+        </div>
+        
+        <div class="profile-section">
+            <div class="info-item">
+                <span class="info-label">Divisi</span>
+                <span class="info-value">IT</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Posisi</span>
+                <span class="info-value">Web Developer</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Atasan</span>
+                <span class="info-value">Jane Smith</span>
+            </div>
+        </div>
+        
+        <button class="logout-btn">Keluar</button>
+    </div>
+    
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <a href="#" class="nav-item active" data-page="home-page">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="#" class="nav-item" data-page="attendance-page">
+            <i class="fas fa-fingerprint"></i>
+            <span>Absensi</span>
+        </a>
+        <a href="#" class="nav-item" data-page="leave-page">
+            <i class="fas fa-calendar-check"></i>
+            <span>Izin</span>
+        </a>
+        <a href="#" class="nav-item" data-page="records-page">
+            <i class="fas fa-file-alt"></i>
+            <span>Rekap</span>
+        </a>
+        <a href="#" class="nav-item" data-page="profile-page">
+            <i class="fas fa-user"></i>
+            <span>Profil</span>
+        </a>
+    </div>
+
+    <script>
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('current-time').textContent = timeString;
+        }
+        
+        setInterval(updateTime, 1000);
+        updateTime(); // Initial call
+        
+        // Navigation functionality
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all nav items and pages
+                document.querySelectorAll('.nav-item').forEach(nav => {
+                    nav.classList.remove('active');
+                });
+                
+                document.querySelectorAll('.page-content').forEach(page => {
+                    page.classList.remove('active');
+                });
+                
+                // Add active class to clicked nav item and corresponding page
+                this.classList.add('active');
+                const pageId = this.getAttribute('data-page');
+                document.getElementById(pageId).classList.add('active');
+            });
+        });
+        
+        // Quick action buttons
+        document.querySelectorAll('.action-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const text = this.querySelector('h3').textContent;
+                
+                if (text.includes('Absensi')) {
+                    document.querySelector('[data-page="attendance-page"]').click();
+                } else if (text.includes('Izin')) {
+                    document.querySelector('[data-page="leave-page"]').click();
+                } else if (text.includes('Rekap')) {
+                    document.querySelector('[data-page="records-page"]').click();
+                } else if (text.includes('Notifikasi')) {
+                    alert('Fitur notifikasi akan datang!');
+                }
+            });
+        });
+        
+        // Logout button
+        document.querySelector('.logout-btn').addEventListener('click', function() {
+            if (confirm('Apakah Anda yakin ingin keluar?')) {
+                alert('Anda telah logout');
+                // In a real app, you would redirect to login page
+                // window.location.href = '/logout';
+            }
+        });
+        
+        // Attendance buttons
+        document.querySelector('.attendance-btn').addEventListener('click', function() {
+            alert('Check In berhasil dicatat!');
+        });
+        
+        document.querySelector('.attendance-btn.secondary').addEventListener('click', function() {
+            alert('Check Out berhasil dicatat!');
+        });
+        
+        // Leave form submission
+        document.querySelector('.submit-btn').addEventListener('click', function() {
+            const leaveType = document.getElementById('leave-type').value;
+            const leaveDate = document.getElementById('leave-date').value;
+            
+            if (!leaveType || !leaveDate) {
+                alert('Harap isi semua field yang diperlukan');
+                return;
+            }
+            
+            alert('Pengajuan izin berhasil dikirim!');
+        });
+    </script>
+</body>
+</html>
